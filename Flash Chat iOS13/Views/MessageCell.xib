@@ -3,7 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -21,11 +21,17 @@
                     <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Hyz-mH-gKS">
                         <rect key="frame" x="10" y="10" width="447" height="54"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="YouAvatar" translatesAutoresizingMaskIntoConstraints="NO" id="mBH-e4-KCH">
+                                <rect key="frame" x="0.0" y="0.0" width="58" height="36"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="58" id="BRa-2x-GDh"/>
+                                </constraints>
+                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wtV-Uz-lnG">
-                                <rect key="frame" x="0.0" y="0.0" width="369" height="50"/>
+                                <rect key="frame" x="78" y="0.0" width="291" height="54"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="bla bla bla bla bla bla bla bla bla bla bla" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sy9-4T-O3x">
-                                        <rect key="frame" x="10" y="10" width="349" height="30"/>
+                                        <rect key="frame" x="10" y="10" width="271" height="34"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" name="BrandLightBlue"/>
                                         <nil key="highlightedColor"/>
@@ -60,12 +66,14 @@
                 <outlet property="avatarImgView" destination="4MW-Wn-aqQ" id="K5z-iY-QuT"/>
                 <outlet property="messageBuble" destination="wtV-Uz-lnG" id="mzY-7N-7V8"/>
                 <outlet property="messageLbl" destination="Sy9-4T-O3x" id="Ufm-2a-QHC"/>
+                <outlet property="youImgView" destination="mBH-e4-KCH" id="FKl-gS-wwe"/>
             </connections>
             <point key="canvasLocation" x="125.36231884057972" y="143.97321428571428"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="MeAvatar" width="36" height="36"/>
+        <image name="YouAvatar" width="36" height="36"/>
         <namedColor name="BrandLightBlue">
             <color red="0.92199999094009399" green="0.98000001907348633" blue="0.99599999189376831" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

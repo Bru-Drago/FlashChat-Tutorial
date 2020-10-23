@@ -57,6 +57,8 @@ class ChatViewController: UIViewController {
                             
                             DispatchQueue.main.async {
                                 self.tableView.reloadData()
+                                let indexPath = IndexPath(row: self.messages.count - 1 , section: 0)
+                                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                             }
                         }
                     }
@@ -106,15 +108,32 @@ class ChatViewController: UIViewController {
 
 extension ChatViewController : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(messages.count)
+       
         return messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        let message = messages[indexPath.row]
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! MessageCell
         
-       cell.messageLbl.text = messages[indexPath.row].body
+       cell.messageLbl.text = message.body
+        
+        // esta msg é do usuario logado
+        if message.sender == Auth.auth().currentUser?.email {
+            cell.youImgView.isHidden = true
+            cell.avatarImgView.isHidden = false
+            cell.messageBuble.backgroundColor = UIColor(named: K.BrandColors.lightPurple)
+            cell.messageLbl.textColor = UIColor(named: K.BrandColors.purple)
+        }
+        //esta mensagem é de outro sender
+        else {
+            cell.youImgView.isHidden = false
+            cell.avatarImgView.isHidden = true
+            cell.messageBuble.backgroundColor = UIColor(named: K.BrandColors.purple)
+            cell.messageLbl.textColor = UIColor(named: K.BrandColors.lightPurple)
+        }
         
         return cell
     }
