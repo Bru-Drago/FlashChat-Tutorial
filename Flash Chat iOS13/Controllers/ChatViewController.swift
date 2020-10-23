@@ -10,61 +10,113 @@ import UIKit
 import Firebase
 
 class ChatViewController: UIViewController {
-
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     
-    var messages : [Message] = [
-        Message(sender: "teste@teste.com.br", body: "Oi!"),
-        Message(sender: "ab@ab.com", body: "Oie!"),
-        Message(sender: "teste@teste.com.br", body: "e ai,blz?")
-    ]
+    //referencia ao banco de dados
+    let db = Firestore.firestore()
+    
+    var messages : [Message] = []
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        loadMessages()
         
         tableView.dataSource = self
+        tableView.delegate = self
+        
         
         navigationController?.isNavigationBarHidden = false
         title = K.appName
         navigationItem.hidesBackButton = true
         
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        
+       
     }
+    
+    func loadMessages(){
+        
+        db.collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener {(querySnapshot, error) in
+            
+            self.messages = []
+            
+            if let e = error{
+                print("\(e) erro no get documents")
+            }else{
+                if  let snapshotDoc =  querySnapshot?.documents{
+                    for doc in snapshotDoc {
+                        let data = doc.data()
+                        if let mSender = data[K.FStore.senderField] as? String,let mBody = data [K.FStore.bodyField] as? String {
+                            let newMessage = Message(sender: mSender, body: mBody)
+                            self.messages.append(newMessage)
+                            
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+   
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
         
         let firebaseAuth = Auth.auth()
-    do {
-      try firebaseAuth.signOut()
-        navigationController?.popToRootViewController(animated: true)
-      
-    } catch let signOutError as NSError {
+        do {
+            try firebaseAuth.signOut()
+            navigationController?.popToRootViewController(animated: true)
+            
+        } catch let signOutError as NSError {
+            
+            print ("Error signing out: %@", signOutError)
+        }
         
-      print ("Error signing out: %@", signOutError)
-    }
-      
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
+        
+        //verificando se não é nulo
+        if let messageBody   = messageTextfield.text,
+           let messageSender = Auth.auth().currentUser?.email {
+            
+            db.collection(K.FStore.collectionName).addDocument(data: [K.FStore.senderField : messageSender, K.FStore.bodyField : messageBody,K.FStore.dateField : Date().timeIntervalSince1970]) { (error) in
+                
+                if let e = error {
+                    print("Problema salvando os dados no Firestore \(e)")
+                }else {
+                    DispatchQueue.main.async {
+                        self.messageTextfield.text = ""
+                    }
+                    print("Dados salvos com sucesso")
+                }
+            }
+        }
     }
     
-
+    
 }
 
-extension ChatViewController : UITableViewDataSource{
+extension ChatViewController : UITableViewDataSource , UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(messages.count)
         return messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! MessageCell
-        cell.messageLbl.text = messages[indexPath.row].body
+        
+       cell.messageLbl.text = messages[indexPath.row].body
+        
         return cell
     }
-    
-    
 }
 
